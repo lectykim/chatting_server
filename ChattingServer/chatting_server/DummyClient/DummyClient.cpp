@@ -79,16 +79,13 @@ int main()
 	std::wcout.imbue(std::locale("kor"));
 	ServerPacketHandler::Init();
 
-	semMainLogic = CreateSemaphore(NULL, 1, 1, NULL);
-	semInGame = CreateSemaphore(NULL, 0, 1, NULL);
-
 	this_thread::sleep_for(1s);
 
 	ClientServiceRef service = MakeShared<ClientService>(
 		NetAddress(L"127.0.0.1", 7777),
 		MakeShared<IocpCore>(),
 		MakeShared<ServerSession>, // TODO : SessionManager 등
-		1000);
+		10);
 
 	ASSERT_CRASH(service->Start());
 

@@ -122,12 +122,22 @@ bool Handle_C_ENTER_ROOM(PacketSessionRef& session, Protocol::C_ENTER_ROOM& pkt)
 		}
 		else if (room->pw == pkt.pw())
 		{
-			gameSession->user->ownerSession.lock()->_room = room;
-			GRoom->DoAsync(&Room::Leave, gameSession->user);
 			//동시에 2명 이상의 유저가 입장할 수 있으므로 JobQueue에 맡기지 않고 바로 실행
-			room->Enter(gameSession->user);
-			enterRoomPkt.set_success(true);
-			enterRoomPkt.set_roomcode(pkt.roomcode());
+			if (room->Enter(gameSession->user) == false)
+			{
+				enterRoomPkt.set_success(false);
+				enterRoomPkt.set_code(10);
+			}
+			else
+			{
+				gameSession->user->ownerSession.lock()->_room = room;
+				GRoom->DoAsync(&Room::Leave, gameSession->user);
+				
+
+				enterRoomPkt.set_success(true);
+				enterRoomPkt.set_roomcode(pkt.roomcode());
+			}
+			
 
 			
 		}

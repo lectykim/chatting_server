@@ -5,7 +5,7 @@ class Room : public JobQueue
 {
 public:
 	// 싱글쓰레드 환경인마냥 코딩
-	void Enter(UserRef user);
+	bool Enter(UserRef user);
 	void Leave(UserRef user);
 	void Broadcast(SendBufferRef sendBuffer);
 
@@ -16,8 +16,11 @@ public:
 	uint64 roomId;
 	string roomName;
 	string pw;
-	uint32 maxUser = 10000;
+	uint32 maxUser = 8;
 	bool isStarted = 0;
+
+private:
+	USE_LOCK;
 };
 
 extern shared_ptr<Room> GRoom;
